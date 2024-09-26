@@ -10,7 +10,7 @@ void Config::init( ) {
 	m_path = "C:\\supremacy\\";
 
 	// create folder.
-	std::filesystem::create_directory( m_path.c_str( ) );
+	std::filesystem::create_directory( "C:\\supremacy\\" );
 
 	// we found the path.
 	// and we managed to create our subdir.
@@ -26,10 +26,7 @@ void Config::load( const Form* form, const std::string& name ) {
 		return;
 
 	// make copy of parent dir.
-	std::string file{ m_path };
-
-	// append filename.
-	file.c_str( ) + std::string( name.c_str( ) );
+	std::string file = m_path.c_str( ) + std::string( name.c_str( ) );
 
 	// construct incoming file stream.
 	std::ifstream in{ file };
@@ -147,10 +144,7 @@ void Config::save( const Form* form, const std::string& name ) {
 		return;
 
 	// make copy of parent dir.
-	std::string file{ m_path };
-
-	// append filename.
-	file.c_str( ) + std::string( name.c_str( ) );
+	std::string file = m_path.c_str( ) + std::string( name.c_str( ) );
 
 	// construct outgoing file stream.
 	std::ofstream stream{ file };
