@@ -199,7 +199,6 @@ bool CSGO::init( ) {
 	g_listener.init( );
 	render::init( );
 	g_menu.init( );
-	g_config.LoadHotkeys( );
 	g_chams.init( );
 	g_hooks.init( );
 	Detour::init( );
