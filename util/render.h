@@ -69,7 +69,7 @@ namespace render {
 	void rect_filled_fade( int x, int y, int w, int h, Color color, int a1, int a2 );
 	void rect_outlined( int x, int y, int w, int h, Color color, Color color2 );
 	void circle( int x, int y, int radius, int segments, Color color );
-	void gradient( int x, int y, int w, int h, Color color1, Color color2 );
+	void gradient( int x, int y, int w, int h, Color color1, Color color2, bool horizontal = false );
 	void sphere( vec3_t origin, float radius, float angle, float scale, Color color );
 	Vertex RotateVertex( const vec2_t& p, const Vertex& v, float angle );
 }
