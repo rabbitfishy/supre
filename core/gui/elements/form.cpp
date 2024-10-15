@@ -34,7 +34,7 @@ void Form::draw_background( int x, int y, int width, int height, Color color ) {
 	// 					   ìnner,  middle, outter, border
 	int border_colors[ 6 ] = { 60, 35, 35, 35, 60, 0 };
 	for ( int i = 0; i < 6; i++ )
-		render::rect( x - i, y - i, width + 2 * i, height + 2 * i, Color( border_colors[ i ], border_colors[ i ], border_colors[ i ] ) );
+		render::rect( x - i, y - i, width + 2 * i, height + 2 * i, Color( border_colors[ i ], border_colors[ i ], border_colors[ i ], m_alpha ) );
 }
 
 void Form::draw_tabs( ) {
@@ -50,7 +50,7 @@ void Form::draw_tabs( ) {
 	render::rect_filled( tabs_area.x, tabs_area.y, tabs_area.w, tabs_area.h, { 17, 17, 17, m_alpha } );
 
 	// draw outline.
-	render::rect( tabs_area.x, tabs_area.y, tabs_area.w, tabs_area.h, { 17, 17, 17, m_alpha } );
+	render::rect( tabs_area.x, tabs_area.y, tabs_area.w, tabs_area.h, { 60, 60, 60, m_alpha } );
 
 	Color color = g_gui.m_color;
 	color.a( ) = m_alpha;
@@ -78,7 +78,7 @@ void Form::draw_elements( ) {
 	render::rect_filled( el.x, el.y, el.w, el.h, { 17, 17, 17, m_alpha } );
 
 	// draw outline.
-	render::rect( el.x, el.y, el.w, el.h, { 17, 17, 17, m_alpha } );
+	render::rect( el.x, el.y, el.w, el.h, { 60, 60, 60, m_alpha } );
 
 	// draw the date and username.
 	std::string date = XOR( __DATE__ );
