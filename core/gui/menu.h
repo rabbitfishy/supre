@@ -2093,13 +2093,9 @@ public:
 class Menu {
 public:
 	MainForm	main;
-	Colorpicker picker;
 
 public:
 	void init( ) {
-
-		// setup our picker texture before setting up the menu.
-		picker.update( );
 
 		main.init( );
 		g_gui.RegisterForm( &main, VK_INSERT );
