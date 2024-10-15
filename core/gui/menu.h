@@ -2092,7 +2092,7 @@ public:
 
 class Menu {
 public:
-	MainForm	main;
+	MainForm main;
 
 public:
 	void init( ) {
