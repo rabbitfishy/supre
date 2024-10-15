@@ -90,12 +90,13 @@ void render::circle( int x, int y, int radius, int segments, Color color ) {
 
 	g_csgo.m_surface->DrawTexturedPolygon( vertices.size( ), vertices.data( ) );
 }
-void render::gradient( int x, int y, int w, int h, Color color1, Color color2 ) {
+
+void render::gradient( int x, int y, int w, int h, Color color1, Color color2, bool horizontal ) {
 	g_csgo.m_surface->DrawSetColor( color1 );
-	g_csgo.m_surface->DrawFilledRectFade( x, y, x + w, y + h, color1.a( ), 0, false );
+	g_csgo.m_surface->DrawFilledRectFade( x, y, x + w, y + h, color1.a( ), 0, horizontal );
 
 	g_csgo.m_surface->DrawSetColor( color2 );
-	g_csgo.m_surface->DrawFilledRectFade( x, y, x + w, y + h, 0, color2.a( ), false );
+	g_csgo.m_surface->DrawFilledRectFade( x, y, x + w, y + h, 0, color2.a( ), horizontal );
 }
 
 void render::sphere( vec3_t origin, float radius, float angle, float scale, Color color ) {
