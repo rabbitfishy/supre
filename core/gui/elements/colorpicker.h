@@ -55,8 +55,8 @@ public:
 		m_hue_drag		= false;
 		m_alpha_drag	= false;
 	}
-
-	static void update( );
+	
+	void update( );
 
 protected:
 	bool					m_open;
