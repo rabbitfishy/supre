@@ -57,7 +57,7 @@ void Colorpicker::draw( ) {
 	// draw picker.
 	if ( m_open ) {
 
-		// update texture.
+		// update our picker texture.
 		Colorpicker::update( );
 
 		// background.
