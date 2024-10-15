@@ -56,6 +56,8 @@ public:
 		m_alpha_drag	= false;
 	}
 
+	static void update( );
+
 protected:
 	bool					m_open;
 	std::string				m_label;
@@ -78,5 +80,4 @@ protected:
 	void draw( ) override;
 	void think( ) override;
 	void click( ) override;
-	void update( );
 };
