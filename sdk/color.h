@@ -18,45 +18,63 @@ public:
 	__forceinline Color( int r, int g, int b, int a = 255 ) : m_r{ ( uint8_t )r }, m_g{ ( uint8_t )g }, m_b{ ( uint8_t )b }, m_a{ ( uint8_t )a } { }
 	__forceinline Color( uint32_t rgba ) : m_rgba{ rgba } { }
 
-	static Color hsl_to_rgb( float h, float s, float l ) {
-		float q;
+    static void color_to_hsv( Color c, float& h, float& s, float& v ) {
 
-		if( l < 0.5f )
-			q = l * ( s + 1.f );
+        float r_norm = float( c.r( ) ) / 255.0f;
+        float g_norm = float( c.g( ) ) / 255.0f;
+        float b_norm = float( c.b( ) ) / 255.0f;
 
-		else
-			q = l + s - ( l * s );
+        float cmax = std::max( { r_norm, g_norm, b_norm } );
+        float cmin = std::min( { r_norm, g_norm, b_norm } );
+        float diff = cmax - cmin;
 
-		float p = 2 * l - q;
+        v = cmax;
 
-		float rgb[ 3 ];
-		rgb[ 0 ] = h + ( 1.f / 3.f );
-		rgb[ 1 ] = h;
-		rgb[ 2 ] = h - ( 1.f / 3.f );
+        if ( cmax == 0.0f )
+            s = 0.0f;
+        else
+            s = diff / cmax;
 
-		for( int i = 0; i < 3; ++i ) {
-			if( rgb[ i ] < 0 )
-				rgb[ i ] += 1.f;
+        if ( diff == 0.0f )
+            h = 0.0f;
+        else if ( cmax == r_norm )
+            h = std::fmod( ( 60 * ( ( g_norm - b_norm ) / diff ) + 360 ), 360 ) / 360.0f;
+        else if ( cmax == g_norm )
+            h = std::fmod( ( 60 * ( ( b_norm - r_norm ) / diff ) + 120 ), 360 ) / 360.0f;
+        else
+            h = std::fmod( ( 60 * ( ( r_norm - g_norm ) / diff ) + 240 ), 360 ) / 360.0f;
+    }
 
-			if( rgb[ i ] > 1 )
-				rgb[ i ] -= 1.f;
+    static Color hsv_to_rgb( float h, float s, float v, float a ) {
 
-			if( rgb[ i ] < ( 1.f / 6.f ) )
-				rgb[ i ] = p + ( ( q - p ) * 6 * rgb[ i ] );
-			else if( rgb[ i ] < 0.5f )
-				rgb[ i ] = q;
-			else if( rgb[ i ] < ( 2.f / 3.f ) )
-				rgb[ i ] = p + ( ( q - p ) * 6 * ( ( 2.f / 3.f ) - rgb[ i ] ) );
-			else
-				rgb[ i ] = p;
-		}
+        float r, g, b;
 
-		return { 
-			int( rgb[ 0 ] * 255.f ), 
-			int( rgb[ 1 ] * 255.f ), 
-			int( rgb[ 2 ] * 255.f ) 
-		};
-	}
+        if (s == 0.0f) {
+            r = g = b = v;
+        }
+        else {
+            int i   = int( h * 6.0f );
+            float f = ( h * 6.0f ) - i;
+            float p = v * ( 1.0f - s );
+            float q = v * ( 1.0f - s * f );
+            float t = v * ( 1.0f - s * ( 1.0f - f ) );
+
+            switch ( i % 6 ) {
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+            }
+        }
+
+        return Color( r * 255, g * 255, b * 255, a );
+    }
+
+    static Color hsv_to_rgb( float h, float s, float v ) {
+        return hsv_to_rgb( h, s, v, 255.0f );
+    }
 
 	// member accessors.
 	__forceinline uint8_t& r( ) { return m_r; }
@@ -66,7 +84,7 @@ public:
 	__forceinline uint32_t& rgba( ) { return m_rgba; }
 
     // operators.
-    __forceinline operator uint32_t() { return m_rgba; }
+    __forceinline operator uint32_t( ) { return m_rgba; }
 };
 
 namespace colors {
