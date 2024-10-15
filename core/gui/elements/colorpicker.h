@@ -55,8 +55,6 @@ public:
 		m_hue_drag		= false;
 		m_alpha_drag	= false;
 	}
-	
-	void update( );
 
 protected:
 	bool					m_open;
@@ -80,4 +78,5 @@ protected:
 	void draw( ) override;
 	void think( ) override;
 	void click( ) override;
+	void update( );
 };
