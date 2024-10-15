@@ -231,6 +231,7 @@ void Colorpicker::think( ) {
 }
 
 void Colorpicker::click( ) {
+
 	Rect  area{ m_parent->GetElementsRect( ) };
 	Point p{ area.x + m_pos.x, area.y + m_pos.y };
 
