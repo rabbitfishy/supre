@@ -1,5 +1,5 @@
 # Supre
-cleaned and working version of supremacy for csgo legacy.
+cleaned and working version of supremacy for csgo legacy.<br>
 free config included in the screenshot folder.
 <br>
 # Menu Screenshot
