@@ -1,23 +1,32 @@
 #pragma once
 
-#define COLORPICKER_WIDTH		20
-#define COlORPICKER_HEIGHT		8
-#define COLORPICKER_PICKER_SIZE 256
+#define PREVIEW_WIDTH			20
+#define PREVIEW_HEIGHT			8
+#define PREVIEW_OFFSET_X		175
+
+#define COLORPICKER_OFFSET_X	10
+#define COLORPICKER_OFFSET_Y	5
+#define COLORPICKER_PADDING		5
+#define COLORPICKER_SIZE		150
+
+#define HUE_BAR_WIDTH			10
+#define ALPHA_BAR_HEIGHT		10
 
 class Colorpicker : public Element {
 public:
-	__forceinline Colorpicker( ) : m_open{ false }, m_label{}, m_color{}, m_ptr{ nullptr } {
-		m_flags     = ElementFlags::DRAW | ElementFlags::CLICK | ElementFlags::ACTIVE | ElementFlags::SAVE | ElementFlags::DEACIVATE;
-		m_type      = ElementTypes::COLORPICKER;
-		m_h         = m_base_h = COlORPICKER_HEIGHT;
+	__forceinline Colorpicker( ) : m_open{ false }, m_label{ }, m_color{ }, m_ptr{ nullptr } {
+		m_flags		= ElementFlags::DRAW | ElementFlags::CLICK | ElementFlags::ACTIVE | ElementFlags::SAVE;
+		m_type		= ElementTypes::COLORPICKER;
+		m_h			= m_base_h = PREVIEW_HEIGHT;
 		m_use_label = true;
-		m_show      = true;
+		m_show		= true;
 	}
 
 	__forceinline void setup( const std::string &label, const std::string &file_id, Color color, Color* ptr = nullptr ) {
 		m_label   = label;
 		m_file_id = file_id;
 		m_color   = color;
+		m_alpha	  = m_color.a( ) / 255.0f;
 		m_ptr     = ptr;
 
 		if( m_ptr )
@@ -28,6 +37,7 @@ public:
 		bool changed = m_color.rgba( ) != color.rgba( );
 
 		m_color = color;
+		m_alpha = m_color.a( ) / 255.0f;
 
 		if( m_ptr )
 			*m_ptr = m_color;
@@ -40,24 +50,33 @@ public:
 		return m_color;
 	}
 
-	static void init( );
-
-	static __forceinline Color ColorFromPos( int x, int y ) {
-		return *( Color* )( gradient.get( ) + x + y * COLORPICKER_PICKER_SIZE );
+	__forceinline void reset_drag( ) {
+		m_color_drag	= false;
+		m_hue_drag		= false;
+		m_alpha_drag	= false;
 	}
 
-public:
-	static int texture;
-	static std::unique_ptr< Color[] > gradient;
-
 protected:
-	bool		m_open;
-	std::string m_label;
-	Color		m_color;
-	Color*		m_ptr;
+	bool					m_open;
+	std::string				m_label;
+	Color					m_color;
+	Color*					m_ptr;
+
+	float					m_hue;
+	float					m_saturation;
+	float					m_value;
+	float					m_alpha;
+
+	bool					m_alpha_drag;
+	bool					m_hue_drag;
+	bool					m_color_drag;
+
+	int						m_texture;
+	std::vector< Color >	m_gradient;
 
 protected:
 	void draw( ) override;
 	void think( ) override;
 	void click( ) override;
+	void update( );
 };
