@@ -359,7 +359,7 @@ void Client::SetAngles( ) {
 	g_cl.m_local->m_angNetworkAngles( ) = m_rotation;
 
 	// set radar angles.
-	if( g_csgo.m_input->CAM_IsThirdPerson( ) )
+	if( g_menu.main.antiaim.enable.get( ) )
 		g_csgo.m_prediction->SetLocalViewAngles( m_radar );
 }
 
