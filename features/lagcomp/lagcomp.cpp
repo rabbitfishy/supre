@@ -303,64 +303,52 @@ void LagCompensation::PlayerMove( LagRecord* record ) {
 }
 
 void LagCompensation::AirAccelerate( LagRecord* record, ang_t angle, float fmove, float smove ) {
-	vec3_t fwd, right, wishvel, wishdir;
-	float  maxspeed, wishspd, wishspeed, currentspeed, addspeed, accelspeed;
+
+	vec3_t forward, right;
 
 	// determine movement angles.
-	math::AngleVectors( angle, &fwd, &right );
+	math::AngleVectors( angle, &forward, &right );
 
-	// zero out z components of movement vectors.
-	fwd.z   = 0.f;
+	forward.z = 0.f;
+	forward.normalize( );
+
 	right.z = 0.f;
-
-	// normalize remainder of vectors.
-	fwd.normalize( );
 	right.normalize( );
 
-	// determine x and y parts of velocity.
-	for( int i{}; i < 2; ++i )       
-		wishvel[ i ] = ( fwd[ i ] * fmove ) + ( right[ i ] * smove );
+	vec3_t wish_vel( forward.x * fmove + right.x * smove, forward.y * fmove + right.y * smove, 0.f );
 
-	// zero out z part of velocity.
-	wishvel.z = 0.f;
+	vec3_t wish_dir = wish_vel;
+	float wish_speed = wish_dir.normalize( );
 
-	// determine maginitude of speed of move.
-	wishdir   = wishvel;
-	wishspeed = wishdir.normalize( );
+	if ( wish_speed != 0 && ( wish_speed >= record->m_player->m_flMaxspeed( ) ) ) {
 
-	// get maxspeed.
-	maxspeed = record->m_player->m_flMaxspeed( );
+		wish_vel = wish_vel * ( record->m_player->m_flMaxspeed( ) / wish_speed );
+		wish_speed = record->m_player->m_flMaxspeed( );
+	}
 
-	// clamp to server defined max speed.
-	if( wishspeed != 0.f && wishspeed > maxspeed )
-		wishspeed = maxspeed;
+	float wish_spd = wish_speed;
 
-	// make copy to preserve original variable.
-	wishspd = wishspeed;
-
-	// cap speed.
-	if( wishspd > 30.f )
-		wishspd = 30.f;
+	math::clamp( wish_spd, 1.f, 30.f );
 
 	// determine veer amount.
-	currentspeed = record->m_pred_velocity.dot( wishdir );
+	float current_speed = record->m_pred_velocity.dot( wish_dir );
 
 	// see how much to add.
-	addspeed = wishspd - currentspeed;
+	const float add_speed = wish_spd - current_speed;
 
 	// if not adding any, done.
-	if( addspeed <= 0.f )
+	if ( add_speed <= 0.f )
 		return;
 
-	// Determine acceleration speed after acceleration
-	accelspeed = g_csgo.sv_airaccelerate->GetFloat( ) * wishspeed * g_csgo.m_globals->m_interval;
+	// define our acceleration.
+	float accel_speed = g_csgo.sv_airaccelerate->GetFloat( ) * wish_speed * g_csgo.m_globals->m_interval * record->m_player->m_surfaceFriction( );
 
 	// cap it.
-	if( accelspeed > addspeed )
-		accelspeed = addspeed;
+	if ( accel_speed > add_speed )
+		accel_speed = add_speed;
 
 	// add accel.
-	record->m_pred_velocity += ( wishdir * accelspeed );
+	record->m_pred_velocity += ( wish_dir * accel_speed );
 }
 
 void LagCompensation::PredictAnimations( CCSGOPlayerAnimState* state, LagRecord* record ) {
