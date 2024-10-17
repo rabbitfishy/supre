@@ -279,7 +279,7 @@ void LagCompensation::PlayerMove( LagRecord* record ) {
 
 			const float dot = record->m_pred_velocity.dot( trace.m_plane.m_normal );
 
-			if (dot < 0.f) {
+			if ( dot < 0.f ) {
 
 				record->m_pred_velocity.x -= dot * trace.m_plane.m_normal.x;
 				record->m_pred_velocity.y -= dot * trace.m_plane.m_normal.y;
