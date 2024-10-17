@@ -250,55 +250,67 @@ bool LagCompensation::StartPrediction( AimPlayer* data ) {
 }
 
 void LagCompensation::PlayerMove( LagRecord* record ) {
-	vec3_t                start, end, normal;
-	CGameTrace            trace;
-	CTraceFilterWorldOnly filter;
 
-	// define trace start.
-	start = record->m_pred_origin;
+	ConVar* sv_gravity		= g_csgo.m_cvar->FindVar( HASH( "sv_gravity" ) );
+	ConVar* sv_jump_impulse = g_csgo.m_cvar->FindVar( HASH( "sv_jump_impulse" ) );
 
-	// move trace end one tick into the future using predicted velocity.
-	end = start + ( record->m_pred_velocity * g_csgo.m_globals->m_interval );
+	if ( ~( record->m_pred_flags & FL_ONGROUND ) ) {
+
+		record->m_pred_velocity.z -= g_csgo.m_globals->m_interval * sv_gravity->GetFloat( );
+		record->m_pred_velocity.z += g_csgo.m_globals->m_interval * record->m_velocity.z;
+	}
+
+	const vec3_t min		= record->m_mins;
+	const vec3_t maxs		= record->m_maxs;
+
+	const vec3_t start		= record->m_pred_origin;
+
+	vec3_t end				= start + ( record->m_pred_velocity * g_csgo.m_globals->m_interval );
+
+	CGameTrace				trace;
+	CTraceFilterWorldOnly	filter;
 
 	// trace.
-	g_csgo.m_engine_trace->TraceRay( Ray( start, end, record->m_mins, record->m_maxs ), CONTENTS_SOLID, &filter, &trace );
+	g_csgo.m_engine_trace->TraceRay( Ray( start, end, min, maxs ), MASK_PLAYERSOLID, &filter, &trace );
 
-	// we hit shit
-	// we need to fix hit.
-	if( trace.m_fraction != 1.f ) {
+	if ( trace.m_fraction != 1.f ) {
 
-		// fix sliding on planes.
-		for( int i{}; i < 2; ++i ) {
-			record->m_pred_velocity -= trace.m_plane.m_normal * record->m_pred_velocity.dot( trace.m_plane.m_normal );
+		for ( int i = 0; i < 2; ++i ) {
 
-			float adjust = record->m_pred_velocity.dot( trace.m_plane.m_normal );
-			if( adjust < 0.f )
-				record->m_pred_velocity -= ( trace.m_plane.m_normal * adjust );
+			const float dot = record->m_pred_velocity.dot( trace.m_plane.m_normal );
 
-			start = trace.m_endpos;
-			end   = start + ( record->m_pred_velocity * ( g_csgo.m_globals->m_interval * ( 1.f - trace.m_fraction ) ) );
+			if (dot < 0.f) {
 
-			g_csgo.m_engine_trace->TraceRay( Ray( start, end, record->m_mins, record->m_maxs ), CONTENTS_SOLID, &filter, &trace );
-			if( trace.m_fraction == 1.f )
+				record->m_pred_velocity.x -= dot * trace.m_plane.m_normal.x;
+				record->m_pred_velocity.y -= dot * trace.m_plane.m_normal.y;
+				record->m_pred_velocity.z -= dot * trace.m_plane.m_normal.z;
+			}
+
+			end = trace.m_endpos + ( record->m_pred_velocity * ( g_csgo.m_globals->m_interval * ( 1.f - trace.m_fraction ) ) );
+
+			g_csgo.m_engine_trace->TraceRay( Ray( start, end, min, maxs ), MASK_PLAYERSOLID, &filter, &trace );
+
+			if ( trace.m_fraction == 1.f )
 				break;
 		}
 	}
 
 	// set new final origin.
-	start = end = record->m_pred_origin = trace.m_endpos;
+	start	== trace.m_endpos;
+	end		= trace.m_endpos;
 
 	// move endpos 2 units down.
 	// this way we can check if we are in/on the ground.
 	end.z -= 2.f;
 
 	// trace.
-	g_csgo.m_engine_trace->TraceRay( Ray( start, end, record->m_mins, record->m_maxs ), CONTENTS_SOLID, &filter, &trace );
+	g_csgo.m_engine_trace->TraceRay( Ray( start, end, min, maxs ), MASK_PLAYERSOLID, &filter, &trace );
 
 	// strip onground flag.
 	record->m_pred_flags &= ~FL_ONGROUND;
 
 	// add back onground flag if we are onground.
-	if( trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f )
+	if ( trace.m_fraction != 1.f && trace.m_plane.m_normal.z > 0.7f )
 		record->m_pred_flags |= FL_ONGROUND;
 }
 
