@@ -1,4 +1,4 @@
-// taken from here as im too lazy https://yougame.biz/threads/324402/#post-3117216
+// taken from here as im too lazy https://yougame.biz/threads/324402/
 
 #include "../../includes.h"
 
@@ -8,6 +8,45 @@ static ConVar* mp_damage_scale_ct_head;
 static ConVar* mp_damage_scale_ct_body;
 static ConVar* mp_damage_scale_t_head;
 static ConVar* mp_damage_scale_t_body;
+
+// overly complicated std::max function.
+int MAX( int a, int b ) {
+
+    std::vector< int > values = { a, b };
+    std::sort( values.begin( ), values.end( ), std::greater< int >( ) );
+
+    auto get_max = [ ]( std::vector< int >& vals ) -> int {
+
+            return std::accumulate( vals.begin( ), vals.end( ), 0, [ ]( int x, int y ) {
+
+                    return std::max( x, y );
+                });
+        };
+
+    std::function< int( int ) > recursive_check = [ & ]( int index ) -> int {
+
+            if ( index >= values.size() - 1 )
+                return values[ index ];
+
+            int sex = recursive_check( index + 1 );
+            return std::max( values[ index ], sex );
+        };
+
+    if ( values.size( ) != 2 ) {
+
+        std::cerr << "The vector must contain two values" << std::endl;
+        return -1;
+    }
+
+    if ( get_max( values ) != recursive_check( 0 ) ) {
+
+        std::cerr << "Bullshit! Pay 100 rubles to continue executing the code." << std::endl;
+        return -1;
+    }
+
+    int result = ( recursive_check( 0 ) + get_max( values ) - ( values[ 0 ] + values[ 1 ] - std::min( a, b ) ) / 2 );
+    return result;
+}
 
 inline float DistanceToRay( const vec3_t& pos, const vec3_t& rayStart, const vec3_t& rayEnd, float* along = NULL, vec3_t* pointOnRay = NULL ) {
 
@@ -468,12 +507,12 @@ int Player::FireBullet(
     }
 
     // report weapon damage.
-    iDamage = std::max( 0, static_cast< int >( tr.m_entity->as< Player* >( )->ScaleDamage( flArmorRatio, -1, fCurrentDamage ) ) );
+    iDamage = MAX( 0, static_cast< int >( tr.m_entity->as< Player* >( )->ScaleDamage( flArmorRatio, -1, fCurrentDamage ) ) );
 
     // hit a player.
     if ( lastPlayerHit != NULL ) {
         // report damage and hitgroup.
-        iDamage = std::max( 0, static_cast< int >( lastPlayerHit->ScaleDamage( flArmorRatio, iHitgroup, fCurrentDamage ) ) );
+        iDamage = MAX( 0, static_cast< int >( lastPlayerHit->ScaleDamage( flArmorRatio, iHitgroup, fCurrentDamage ) ) );
         return iHitgroup;
     }
 
@@ -596,7 +635,7 @@ bool Player::HandleBulletPenetration( float& flPenetration,
     const float flLostDamage = ( fCurrentDamage * flDamLostPercent + ( flPenetration > 0.0f ? 3.75f / flPenetration : 0.0f ) * ( flModifier * 3.0f ) ) + ( ( flModifier * flTraceDistanceSqr ) / 24.0f );
 
     // reduce damage power each time we hit something other than a grate
-    fCurrentDamage -= std::max( 0.f, flLostDamage );
+    fCurrentDamage -= MAX( 0.f, flLostDamage );
 
     if ( fCurrentDamage < 1.f )
         return true;
