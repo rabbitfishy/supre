@@ -53,9 +53,43 @@ LagRecord* Resolver::FindLastRecord( AimPlayer* data ) {
 void Resolver::OnBodyUpdate( Player* player, float value ) {
 	AimPlayer* data = &g_aimbot.m_players[ player->index( ) - 1 ];
 
-	// set data.
-	data->m_old_body = data->m_body;
-	data->m_body     = value;
+	float old_lby					= { };
+	float next_predicted_sim_time	= { };
+	float next_body_update			= 0.0f;
+
+	old_lby = data->m_body;
+
+	if ( old_lby != value ) {
+
+		if ( player != g_cl.m_local && player->m_fFlags( ) & FL_ONGROUND ) {
+
+			next_predicted_sim_time = player->m_flOldSimulationTime( ) + g_csgo.m_globals->m_interval;
+
+			float velocity = player->m_vecVelocity( ).length_2d( );
+
+			if ( velocity > 0.1f ) {
+
+				next_body_update = next_predicted_sim_time + 0.22f;
+			}
+			else {
+
+				next_body_update = next_predicted_sim_time + 1.1f;
+			}
+
+			if ( next_body_update != 0.0f )
+				data->m_body_update = next_body_update;
+		}
+
+		data->m_last_body_update	= player->m_flOldSimulationTime( ) + g_csgo.m_globals->m_interval;
+		data->m_old_body			= old_lby;
+		data->m_body				= math::NormalizedAngle( value );
+	}
+
+	if ( player->m_vecVelocity( ).length_2d( ) > 75.0f || player->m_fFlags( ) & FL_DUCKING && player->m_vecVelocity( ).length_2d( ) > 20.0f ) {
+
+		data->m_last_move_lby		= math::NormalizedAngle( value );
+		data->m_last_time_moved		= player->m_flOldSimulationTime( ) + g_csgo.m_globals->m_interval;
+	}
 }
 
 float Resolver::GetAwayAngle( LagRecord* record ) {
