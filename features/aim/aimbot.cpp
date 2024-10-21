@@ -175,6 +175,17 @@ void AimPlayer::UpdateAnimations( LagRecord *record ) {
 	// skip call to C_BaseEntity::CalcAbsoluteVelocity
 	m_player->m_iEFlags( ) &= ~0x1000;
 
+	// run body prediction.
+	if ( g_resolver.UpdateBodyTimer( record->m_player ) )
+		record->m_body_flick = true;
+
+	if ( record->m_body_flick ) {
+
+		const float lby			= math::NormalizedAngle( record->m_body );
+		record->m_eye_angles.y	= lby;
+		m_player->SetAbsAngles( ang_t( 0.0f, lby, 0.0f ) );
+	}
+	
 	// write potentially resolved angles.
 	m_player->m_angEyeAngles( ) = record->m_eye_angles;
 
