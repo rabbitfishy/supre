@@ -19,9 +19,9 @@ public:
 	LagRecord* FindIdealRecord( AimPlayer* data );
 	LagRecord* FindLastRecord( AimPlayer* data );
 
-	LagRecord *FindFirstRecord( AimPlayer *data );
-
 	void OnBodyUpdate( Player* player, float value );
+
+	bool UpdateBodyTimer( Player* player );
 	float GetAwayAngle( LagRecord* record );
 
 	void MatchShot( AimPlayer* data, LagRecord* record );
