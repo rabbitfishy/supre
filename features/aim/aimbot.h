@@ -50,21 +50,18 @@ public:
 	int       m_missed_shots;
 	LagRecord m_walk_record;
 
-	float     m_body_update;
-	bool      m_moved;
-
 	int m_stand_index;
 	int m_stand_index2;
 	int m_body_index;
 
-
 	// data about the LBY proxy.
 	float m_body;
+	float m_body_update;
 	float m_old_body;
-
-	//std::deque< float >            m_lbyt_update;
-	//std::deque< float >			   m_prefer_stand;
-	//std::deque< float >            m_prefer_air;
+	float m_last_body_update;
+	float m_last_move_lby;
+	float m_last_time_moved;
+	bool  m_moved;
 
 public:
 	void UpdateAnimations( LagRecord* record );
