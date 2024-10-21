@@ -92,6 +92,35 @@ void Resolver::OnBodyUpdate( Player* player, float value ) {
 	}
 }
 
+bool Resolver::UpdateBodyTimer( Player* player ) {
+	AimPlayer* data						= &g_aimbot.m_players[ player->index( ) - 1 ];
+	const float simulation_time_delta	= player->m_flSimulationTime( ) - player->m_flOldSimulationTime( );
+
+	if ( !simulation_time_delta )
+		return false;
+
+	const float animation_time = player->m_flOldSimulationTime( ) + g_csgo.m_globals->m_interval;
+
+	data->m_moved = true;
+
+	if ( player->m_vecVelocity( ).length_2d( ) > 0.1f ) {
+
+		data->m_moved = false;
+		return false;
+	}
+
+	const float update_delta			= animation_time - data->m_body_update;
+	const float recorded_update_delta	= animation_time - data->m_last_body_update;
+
+	if ( update_delta <= 0.0f && update_delta > -1.35f && recorded_update_delta < 0.245f ) {
+
+		data->m_body_update += 1.1f;
+		return true;
+	}
+
+	return false;
+}
+
 float Resolver::GetAwayAngle( LagRecord* record ) {
 	float  delta{ std::numeric_limits< float >::max( ) };
 	vec3_t pos;
