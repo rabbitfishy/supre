@@ -429,21 +429,20 @@ public:
 	MultiDropdown glow;
 	Colorpicker   glow_enemy;
 	Colorpicker   glow_friendly;
-	Slider        glow_blend;
+
 	MultiDropdown chams_enemy;
 	Colorpicker   chams_enemy_vis;
 	Colorpicker   chams_enemy_invis;
-	Slider        chams_enemy_blend;
+
 	Checkbox      chams_enemy_history;
 	Colorpicker   chams_enemy_history_col;
-	Slider        chams_enemy_history_blend;
+
 	MultiDropdown chams_friendly;
 	Colorpicker   chams_friendly_vis;
 	Colorpicker   chams_friendly_invis;
-	Slider        chams_friendly_blend;
+
 	Checkbox      chams_local;
 	Colorpicker   chams_local_col;
-	Slider        chams_local_blend;
 	Checkbox      chams_local_scope;
 
 public:
@@ -520,9 +519,6 @@ public:
 		glow_friendly.setup( XOR( "friendly color" ), XOR( "glow_friendly" ), { 150, 200, 60 } );
 		RegisterElement( &glow_friendly, 1 );
 
-		glow_blend.setup( "", XOR( "glow_blend" ), 10.f, 100.f, false, 0, 60.f, 1.f, XOR( L"%" ) );
-		RegisterElement( &glow_blend, 1 );
-
 		chams_enemy.setup( XOR( "chams enemy" ), XOR( "chams_enemy" ), { XOR( "visible" ), XOR( "invisible" ) } );
 		RegisterElement( &chams_enemy, 1 );
 
@@ -532,17 +528,11 @@ public:
 		chams_enemy_invis.setup( XOR( "color invisible" ), XOR( "chams_enemy_invis" ), { 60, 180, 225 } );
 		RegisterElement( &chams_enemy_invis, 1 );
 
-		chams_enemy_blend.setup( "", XOR( "chams_enemy_blend" ), 10.f, 100.f, false, 0, 100.f, 1.f, XOR( L"%" ) );
-		RegisterElement( &chams_enemy_blend, 1 );
-
 		chams_enemy_history.setup( XOR( "chams history" ), XOR( "chams_history" ) );
 		RegisterElement( &chams_enemy_history, 1 );
 
 		chams_enemy_history_col.setup( XOR( "color" ), XOR( "chams_history_col" ), { 255, 255, 200 } );
 		RegisterElement( &chams_enemy_history_col, 1 );
-
-		chams_enemy_history_blend.setup( "", XOR( "chams_history_blend" ), 10.f, 100.f, false, 0, 100.f, 1.f, XOR( L"%" ) );
-		RegisterElement( &chams_enemy_history_blend, 1 );
 
 		chams_friendly.setup( XOR( "chams friendly" ), XOR( "chams_friendly" ), { XOR( "visible" ), XOR( "invisible" ) } );
 		RegisterElement( &chams_friendly, 1 );
@@ -553,17 +543,11 @@ public:
 		chams_friendly_invis.setup( XOR( "color invisible" ), XOR( "chams_friendly_invis" ), { 255, 50, 0 } );
 		RegisterElement( &chams_friendly_invis, 1 );
 
-		chams_friendly_blend.setup( "", XOR( "chams_friendly_blend" ), 10.f, 100.f, false, 0, 100.f, 1.f, XOR( L"%" ) );
-		RegisterElement( &chams_friendly_blend, 1 );
-
 		chams_local.setup( XOR( "chams local" ), XOR( "chams_local" ) );
 		RegisterElement( &chams_local, 1 );
 
 		chams_local_col.setup( XOR( "color" ), XOR( "chams_local_col" ), { 255, 255, 200 } );
 		RegisterElement( &chams_local_col, 1 );
-
-		chams_local_blend.setup( "", XOR( "chams_local_blend" ), 10.f, 100.f, false, 0, 100.f, 1.f, XOR( L"%" ) );
-		RegisterElement( &chams_local_blend, 1 );
 
 		chams_local_scope.setup( XOR( "blend when scoped" ), XOR( "chams_local_scope" ) );
 		RegisterElement( &chams_local_scope, 1 );
