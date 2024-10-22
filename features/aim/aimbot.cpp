@@ -181,7 +181,7 @@ void AimPlayer::UpdateAnimations( LagRecord *record ) {
 
 	if ( record->m_body_flick ) {
 
-		const float lby			= math::NormalizedAngle( record->m_player->m_flLowerBodyYawTarget( ) );
+		const float lby			= math::NormalizedAngle( m_player->m_flLowerBodyYawTarget( ) );
 		record->m_eye_angles.y	= lby;
 		m_player->SetAbsAngles( ang_t( 0.0f, lby, 0.0f ) );
 	}
