@@ -414,10 +414,10 @@ void Visuals::PenetrationCrosshair( ) {
 		final_color = colors::transparent_red;
 
 	// damage
-	std::string damage = tfm::format( XOR( "%i" ), ( int )g_cl.m_pen_data.m_damage );
+	// std::string damage = tfm::format( XOR( "%i" ), ( int )g_cl.m_pen_data.m_damage );
 
 	// draw damage string.
-	render::esp_small.string( x, y + 10, final_color, damage, render::ALIGN_CENTER );
+	// render::esp_small.string( x, y + 10, final_color, damage, render::ALIGN_CENTER );
 
 	// draw small square in center of screen.
 	render::rect_filled( x - 1, y - 1, 3, 3, final_color );
@@ -1203,7 +1203,8 @@ void Visuals::RenderGlow( ) {
 	if( !g_csgo.m_glow->m_object_definitions.Count( ) )
 		return;
 
-	float blend = g_menu.main.players.glow_blend.get( ) / 100.f;
+	float blend_enemy		= g_menu.main.players.glow_enemy.get( ).a( ) / 100.f;
+	float blend_friendly	= g_menu.main.players.glow_friendly.get( ).a( ) / 100.f;
 
 	for( int i{ }; i < g_csgo.m_glow->m_object_definitions.Count( ); ++i ) {
 		GlowObjectDefinition_t* obj = &g_csgo.m_glow->m_object_definitions[ i ];
@@ -1241,7 +1242,7 @@ void Visuals::RenderGlow( ) {
 		obj->m_render_unoccluded = false;
 		obj->m_render_full_bloom = false;
 		obj->m_color = { ( float ) color.r( ) / 255.f, ( float ) color.g( ) / 255.f, ( float ) color.b( ) / 255.f };
-		obj->m_alpha = opacity * blend;
+		obj->m_alpha = opacity * ( enemy ? blend_enemy : blend_friendly );
 	}
 }
 
