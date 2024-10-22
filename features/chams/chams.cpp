@@ -201,7 +201,7 @@ void Chams::RenderHistoryChams( int index ) {
 			return;
 
 		// override blend.
-		SetAlpha( g_menu.main.players.chams_enemy_history_blend.get( ) / 100.f );
+		SetAlpha( g_menu.main.players.chams_enemy_history_col.get( ).a( ) / 100.f );
 
 		// set material and color.
 		SetupMaterial( debugdrawflat, g_menu.main.players.chams_enemy_history_col.get( ), true );
@@ -272,7 +272,7 @@ void Chams::RenderPlayer( Player* player ) {
 
 		else if( g_menu.main.players.chams_local.get( ) ) {
 			// override blend.
-			SetAlpha( g_menu.main.players.chams_local_blend.get( ) / 100.f );
+			SetAlpha( g_menu.main.players.chams_local_col.get( ).a( ) / 100.f );
 
 			// set material and color.
 			SetupMaterial( debugambientcube, g_menu.main.players.chams_local_col.get( ), false );
@@ -292,13 +292,13 @@ void Chams::RenderPlayer( Player* player ) {
 	if( enemy && g_menu.main.players.chams_enemy.get( 0 ) ) {
 		if( g_menu.main.players.chams_enemy.get( 1 ) ) {
 
-			SetAlpha( g_menu.main.players.chams_enemy_blend.get( ) / 100.f );
+			SetAlpha( g_menu.main.players.chams_enemy_invis.get( ).a( ) / 100.f );
 			SetupMaterial( debugambientcube, g_menu.main.players.chams_enemy_invis.get( ), true );
 
 			player->DrawModel( );
 		}
 
-		SetAlpha( g_menu.main.players.chams_enemy_blend.get( ) / 100.f );
+		SetAlpha( g_menu.main.players.chams_enemy_vis.get( ).a( ) / 100.f );
 		SetupMaterial( debugambientcube, g_menu.main.players.chams_enemy_vis.get( ), false );
 
 		player->DrawModel( );
@@ -307,13 +307,13 @@ void Chams::RenderPlayer( Player* player ) {
 	else if( !enemy && g_menu.main.players.chams_friendly.get( 0 ) ) {
 		if( g_menu.main.players.chams_friendly.get( 1 ) ) {
 
-			SetAlpha( g_menu.main.players.chams_friendly_blend.get( ) / 100.f );
+			SetAlpha( g_menu.main.players.chams_friendly_invis.get( ).a( ) / 100.f );
 			SetupMaterial( debugambientcube, g_menu.main.players.chams_friendly_invis.get( ), true );
 
 			player->DrawModel( );
 		}
 
-		SetAlpha( g_menu.main.players.chams_friendly_blend.get( ) / 100.f );
+		SetAlpha( g_menu.main.players.chams_friendly_vis.get( ).a( ) / 100.f );
 		SetupMaterial( debugambientcube, g_menu.main.players.chams_friendly_vis.get( ), false );
 
 		player->DrawModel( );
