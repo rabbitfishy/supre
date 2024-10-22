@@ -514,14 +514,35 @@ void Resolver::AirNS( AimPlayer* data, LagRecord* record ) {
 void Resolver::ResolvePoses( Player* player, LagRecord* record ) {
 	AimPlayer* data = &g_aimbot.m_players[ player->index( ) - 1 ];
 
+	float pitch = data->m_records[ 0 ].get( )->m_eye_angles.x;
+
+	if ( data->m_records.size( ) > 2 ) {
+
+		if ( std::fabsf( pitch - data->m_records[ 1 ].get( )->m_eye_angles.x ) > 10.0f && std::fabsf( pitch - data->m_records[ 2 ].get( )->m_eye_angles.x ) > 10.0f ) {
+
+			pitch = data->m_records[ 1 ].get( )->m_eye_angles.x;
+
+			if ( player->m_vecVelocity( ).length_2d( ) > 0.1f && player->m_vecVelocity( ).length_2d( ) < 75.0f || data->m_records[ 0 ].get( )->m_fake_walk || player->m_fFlags( ) & FL_DUCKING && player->m_vecVelocity( ).length_2d( ) > 20.0f || data->m_records[ 0 ].get( )->m_lag > 12 )
+				data->m_records[ 0 ].get( )->m_eye_angles.x = pitch;
+		}
+	}
+
+	if ( pitch > 180.0f )
+		pitch -= 360.0f;
+
+	pitch = std::clamp( pitch, -90.0f, 90.0f );
+
+	// body_pitch.
+	player->m_flPoseParameter( )[ 12 ] = pitch;
+
 	// only do this bs when in air.
 	if( record->m_mode == Modes::RESOLVE_AIR ) {
 		// ang = pose min + pose val x ( pose range )
 
 		// lean_yaw
-		player->m_flPoseParameter( )[ 2 ]  = g_csgo.RandomInt( 0, 4 ) * 0.25f;   
+		player->m_flPoseParameter( )[ 2 ]  = pitch * 0.25f;
 
 		// body_yaw
-		player->m_flPoseParameter( )[ 11 ] = g_csgo.RandomInt( 1, 3 ) * 0.25f;
+		player->m_flPoseParameter( )[ 11 ] = pitch * 0.25f;
 	}
 }
